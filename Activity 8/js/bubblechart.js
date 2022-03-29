@@ -198,7 +198,7 @@ window.onload = function(){
         .attr("x", 450)//assigns horizontal position
         .attr("y", 30)//assign verticle position
         .text("City Populations")//text content
-        .style("fill", "#810f7c");
+        //.style("fill", "#810f7c");
 
     //example 3.14 & 3.15 - creating circle labels
     var labels = container.selectAll(".labels")
