@@ -1,22 +1,38 @@
 
-
+/*style for map container*/
 .map {
-    border: medium solid #999; 
+    border: medium solid #999;
+    background: rgb(240, 240, 240); 
 }
-
+/*style for WI counties*/
 .counties {
-    fill: #fff;
+    fill: rgb(1, 170, 119);
     stroke: #ccc;
-    stroke-width: 2px;
+    stroke-width: 1.5px;
+}
+.counties.Dane {
+    fill: rgb(219, 0, 146);
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
+.counties.Milwaukee {
+    fill: rgb(219, 0, 146);
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
+.counties.Brown {
+    fill: rgb(219, 0, 146);
+    stroke: #ccc;
+    stroke-width: 1.5px;
 }
 
-
+/*style for gratecule lines*/
 .gratLines {
     fill: none;
     stroke: #999;
     stroke-width: 1px;
 }
-
+/*style for gratecule background*/
 .gratBackground {
     fill: #D5E3FF;
 }

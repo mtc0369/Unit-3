@@ -52,15 +52,34 @@ function setMap(){
             .attr("class", "countyFeatures")
             .attr("d", path);*/
 
+        //create graticule generator with lines at 5 deg lat/long increments
+        var graticule = d3.geoGraticule()
+            .step([5,5]);
+
+        //create graticule background and class for styling
+        /*var gratBackground = map.append("path")
+            .datum(graticule.outline())
+            .attr("class", "gratBackground")
+            .attr("d", path);*/
+        
+        //method to create graticule lines and class - same syntax as other variables
+        var gratLines = map.selectAll(".gratLines")
+            .data(graticule.lines())
+            .enter()
+            .append("path")
+            .attr("class", "gratLines")
+            .attr("d", path);
+
         //adding WI counties to the map
         var countyFeatures = map.selectAll(".counties")
             .data(countyNRHP)
             .enter()
             .append("path")
             .attr("class", function(d){
-                return "counties " + d.properties.name;
+                return "counties " + d.properties.NAMELSAD;
             })
             .attr("d", path);//finds coordinates of the path - "d" does not stand for datum
+                
 
     };
 };
