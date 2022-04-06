@@ -31,37 +31,40 @@ function setMap(){
     //use Promise.all to parallelize asynchronous data loading
     //can store 3 different datasets here
     var promises = []
-        promises.push(d3.csv("data/NRHP_List_Wisconsin_Final.csv")),                    
+        promises.push(d3.csv("data/NRHP_List_Wisconsin_Final.csv")),
+        promises.push(d3.json("data/WI_SurroundStates.topojson")),                    
         promises.push(d3.json("data/Wisconsin_Counties.topojson"));//projection should be in WGS 84                        
         Promise.all(promises).then(callback);//ajax - fetches multiple datasets at same time
 
     //data parameter - retrieves data as an array
     function callback(data){ 
                 
-        csvData = data[0],//set at 0 for first feature in array    
-        wiCounties = data[1];//set at 1 for second feature in array    
+        csvData = data[0],//set at 0 for first feature in array
+        states = data[1],    
+        wiCounties = data[2];//set at 1 for second feature in array    
         //console.log(csvData);
         //console.log(wiCounties);
         //2 arguments for features in topojson, 2nd part of 2nd argument refers to the objects in the topojson - syntax must be exact same and will fail if file name is changed
-        var countyNRHP = topojson.feature(wiCounties, wiCounties.objects.Wisconsin_Counties).features;//have to add .features to end to create an array
+        var statesMid = topojson.feature(states, states.objects.WI_SurroundStates),
+            countyNRHP = topojson.feature(wiCounties, wiCounties.objects.Wisconsin_Counties).features;//have to add .features to end to create an array
         //console.log(countyNRHP);
-        
-        //don't need this part because this is for basemap dataset
-        /*var countyFeatures = map.append("path")
-            .datum(countyNRHP)//everything will be drawn as a single feature
-            .attr("class", "countyFeatures")
-            .attr("d", path);*/
-
+              
         //create graticule generator with lines at 5 deg lat/long increments
         var graticule = d3.geoGraticule()
             .step([5,5]);
 
         //create graticule background and class for styling
-        /*var gratBackground = map.append("path")
+        var gratBackground = map.append("path")
             .datum(graticule.outline())
             .attr("class", "gratBackground")
-            .attr("d", path);*/
+            .attr("d", path);
         
+        //don't need this part because this is for basemap dataset
+        var stateFeatures = map.append("path")
+            .datum(statesMid)//everything will be drawn as a single feature
+            .attr("class", "stateFeatures")
+            .attr("d", path);
+
         //method to create graticule lines and class - same syntax as other variables
         var gratLines = map.selectAll(".gratLines")
             .data(graticule.lines())
