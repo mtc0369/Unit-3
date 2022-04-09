@@ -2,15 +2,16 @@
 /*style for map container*/
 .map {
     border: medium solid #999;
-    background: rgb(240, 240, 240); 
+    background: rgb(240, 240, 240);
+    margin: 10px 0 0 20px; 
 }
 /*style for WI counties*/
 .counties {
-    fill: rgb(1, 170, 119);
     stroke: rgb(250, 250, 250);
-    stroke-width: 1.5px;
+    stroke-width: 0.75px;
+    stroke-linecap: round;
 }
-.counties.Dane {
+/*.counties.Dane {
     fill: rgb(219, 0, 146);
     stroke: rgb(255, 254, 254);
     stroke-width: 1.5px;
@@ -24,7 +25,7 @@
     fill: rgb(219, 0, 146);
     stroke: rgb(255, 255, 255);
     stroke-width: 1.5px;
-}
+}*/
 
 /*style for gratecule lines*/
 .gratLines {
@@ -43,8 +44,11 @@
     stroke-width: 1px;
 }
 
-.lakeFeatures {
-    fill: #D5E3FF;
+.chart {
+    background-color: rgba(128,128,128,.2);
+    border: medium solid #999;
+    float: right;
+    margin: 10px 20px 0 0;
 }
 
 /*.map path,
