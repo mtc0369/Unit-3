@@ -3,7 +3,7 @@
 .map {
     border: medium solid #999;
     background: rgb(240, 240, 240);
-    margin: 10px 0 0 20px; 
+    margin: 10px 0 0 10px; 
 }
 /*style for WI counties*/
 .counties {
@@ -48,7 +48,45 @@
     background-color: rgba(128,128,128,.2);
     border: medium solid #999;
     float: right;
-    margin: 10px 20px 0 0;
+    margin: 10px 10px 0 0;
+}
+
+.numbers {
+    fill: white;
+    font-family: sans-serif;
+    font-size: 0.5em;
+    writing-mode: vertical-rl;
+}
+
+.chartTitle {
+    font-family: sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.chartBackground {
+    fill: none;
+}
+
+.chartFrame {
+    fill: none;
+    stroke: #999;
+    stroke-width: 3px;
+    shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #999;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 0.8em;
+    fill: #999;
 }
 
 /*.map path,
