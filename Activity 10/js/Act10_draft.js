@@ -76,7 +76,108 @@
             setChart(csvData, colorScale);
             
         };
-    };//end of set map function                
+    };//end of set map function
+
+        //function for coordinated bar chart - annotated bars
+        /*function setChart(csvData, colorScale){            
+
+            //chart frame dimensions
+            var chartWidth = window.innerWidth * 0.50,
+                chartHeight = 460;              
+            
+            //creating a 2nd SVG element to hold the bar chart
+            var chart = d3
+                .select("body")
+                .append("svg")
+                .attr("width", chartWidth)
+                .attr("height", chartHeight)
+                .attr("class", "chart");
+                //.style("background-color", "gray");//don't need this if styling in CSS
+
+            //create a scale to size bars proportionally to frame
+            var yScale = d3
+                .scaleLinear()                
+                .range([0, chartHeight])
+                .domain([0, 115]);//sets the height/length of the bars
+
+            //set bars for each province
+            var bars = chart
+                .selectAll(".bars")
+                .data(csvData)
+                .enter()
+                .append("rect")
+                .sort(function(a, b){
+                    return b[expressed]-a[expressed]
+                })
+                .attr("class", function(d){
+                    return "bars " + d.NAME;
+                })
+                .attr("width", chartWidth / csvData.length - 1)
+                .attr("x", function(d, i){
+                    return i * (chartWidth / csvData.length);
+                })
+                .attr("height", function(d){
+                    return yScale(parseFloat(d[expressed]));//applying the yScale variable to each attribute to set the height og the bars
+                })
+                .attr("y", function(d){
+                    return chartHeight - yScale(parseFloat(d[expressed]));//scale output subtracted here otherwise the bars would grow downward from the chart 
+                })
+                .style("fill", function(d){
+                    return colorScale(d[expressed]);//applying the colorScale to the bars
+                });
+
+            //annotate bars with attribute value text
+            var numbers = chart.selectAll(".numbers")
+                .data(csvData)
+                .enter()
+                .append("text")
+                .sort(function(a, b){
+                    return b[expressed]-a[expressed]//this sort expresion must match the sort expression for 'bars'
+                })
+                .attr("class", function(d){
+                    return "numbers " + d.NAME;//accesses numbers from this property
+                })
+                .attr("text-anchor", "middle")//centers numbers in middle of bar
+                .attr("x", function(d, i){
+                    var fraction = chartWidth / csvData.length;
+                    return i * fraction + (fraction - 1) / 2;
+                })
+                .attr("y", function(d){
+                    if (d[expressed] > 0){                    
+                        return chartHeight - yScale(parseFloat(d[expressed])) + 15;//15 here moves the annotation down within the bar
+                    }
+                    else{
+                        return chartHeight - yScale(parseFloat(d[expressed])) - 5;//moves the 0 values up within view
+                    }
+                })
+                .style("fill", function(d){
+                    if (d[expressed] > 0){
+                        return "white";//styling here will overrides style.css
+                    }
+                    else{                        
+                        return "black";
+                    }
+                })
+                .style("writing-mode", function(d){
+                    if (d[expressed] > 0){
+                        return "vertical-rl";//styling here will overrides style.css
+                    }
+                    else{                        
+                        return "horizontal-tb";
+                    }
+                })
+                .text(function(d){
+                    return d[expressed];
+                });
+
+            //create a text element for the chart title
+            var chartTitle = chart.append("text")
+                .attr("x", 20)
+                .attr("y", 35)
+                .attr("class", "chartTitle")
+                .text("Percent Change in NRHP Listings for " + expressed + " in each County");                
+            
+        };*/        
 
         //function to create coordinated bar chart - axis scale
         function setChart(csvData, colorScale){
@@ -230,7 +331,58 @@
             console.log(countyNRHP)
             return countyNRHP;
         };
+
+        /*//function to create color scale generator - QUANTILE
+        function makeColorScale(data){
+            var colorClasses = [
+                "#D4B9DA",
+                "#C994C7",
+                "#DF65B0",
+                "#DD1C77",
+                "#980043"
+            ];
+
+            //create color scale generator
+            var colorScale = d3
+                .scaleQuantile()
+                .range(colorClasses);
+
+            //build array of all values of the expressed attribute
+            var domainArray = [];
+            for (var i=0; i<data.length; i++){
+                var val = parseFloat(data[i][expressed]);
+                domainArray.push(val);
+            };
+
+            //assign array of expressed values as scale domain
+            colorScale.domain(domainArray);
+
+            return colorScale;
+        };*/
+        /*//function to create color scale generator - EQUAL INTERVAL
+        function makeColorScale(data){
+            var colorClasses = [
+                "#D4B9DA",
+                "#C994C7",
+                "#DF65B0",
+                "#DD1C77",
+                "#980043"
+            ];
         
+            //create color scale generator
+            var colorScale = d3.scaleQuantile()
+                .range(colorClasses);
+        
+            //build two-value array of minimum and maximum expressed attribute values
+            var minmax = [
+                d3.min(data, function(d) { return parseFloat(d[expressed]); }),
+                d3.max(data, function(d) { return parseFloat(d[expressed]); })
+            ];
+            //assign two-value array as scale domain
+            colorScale.domain(minmax);
+        
+            return colorScale;
+        };*/
         //function to create color scale generator - NATURAL BREAKS
         function makeColorScale(data){
             var colorClasses = [
@@ -267,7 +419,7 @@
         
             return colorScale;
         };
-        //function for graticule
+        
         function setGraticule(map, path){
             //create graticule generator with lines at 5 deg lat/long increments
             var graticule = d3
@@ -290,7 +442,7 @@
                 .attr("class", "gratLines")
                 .attr("d", path);
             };
-        //function to iterate and add counties
+
         function setEnumerationUnits(countyNRHP, map, path, colorScale){
             //adding WI counties to the map
             var countyFeatures = map
@@ -310,8 +462,23 @@
                     else{
                         return "#bababa";//will return no value or 0 value as grey
                     }                        
-                });               
-            };        
+                });
+                
+                /*.style("fill", function(d){
+                    return colorScale(d.properties[expressed])//style method to return colors from the colorScale function
+                });*/
+                /*.style("fill", function(d){
+                    if (d.properties[expressed] > 50){
+                        return "red";//styling here will overrides style.css - use conditional to style choropleth manually
+                    }
+                    else{
+                        return "blue";
+                    }
+                        
+                });*/
+            };            
+            
+        
     
 })();
 
