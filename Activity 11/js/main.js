@@ -75,18 +75,21 @@
             //adding bar chart
             setChart(csvData, colorScale);
 
-            createDropdown();
+            createDropdown(csvData);
             
         };
     };//end of set map function                
 
-        //function to create a dropdown menu for attribute selection
-        function createDropdown(){
+        //function to create a DROPDOWN MENU for attribute selection
+        function createDropdown(csvData){
             //add select element
             var dropdown = d3
                 .select("body")
                 .append("select")
-                .attr("class", "dropdown");
+                .attr("class", "dropdown")
+                .on("change", function(){
+                    changeAttribute(this.value, csvData)                    
+                });
 
             //add initial option
             var titleOption = dropdown
@@ -103,6 +106,26 @@
                 .append("option")
                 .attr("value", function(d){ return d })
                 .text(function(d){ return d });
+        };
+
+        //dropdown change event handler
+        function changeAttribute(attribute, csvData) {
+            //change the expressed attribute
+            expressed = attribute;
+
+            //recreate the color scale
+            var colorScale = makeColorScale(csvData);
+
+            //recolor enumeration units
+            var counties = d3.selectAll(".counties").style("fill", function (d) {
+                var value = d.properties[expressed];
+                if (value) {
+                    return colorScale(d.properties[expressed]);
+                } 
+                else {
+                    return "#bababa";
+                }
+            });
         };
 
         //function to create coordinated bar chart - axis scale
@@ -134,7 +157,11 @@
             //create a scale to size bars proportionally to frame and for axis
             var yScale = d3.scaleLinear()
                 .range([450, 43])
-                .domain([-400, 150]);
+                .domain([0, 450]);
+
+            var yAxisScale = d3.scaleLinear()
+                .domain([-400, 150])
+                .range([chartHeight - yScale(-450), 0 ])
 
             //set bars for each province
             var bars = chart.selectAll(".bar")
@@ -151,12 +178,14 @@
                 .attr("x", function(d, i){
                     return i * (chartInnerWidth / csvData.length) + leftPadding;
                 })
+               /* .attr("y", function(d, i) { return chartHeight - Math.max(0, parseFloat(d[expressed]));})
+                .attr("height", function(d) { return Math.abs(yScale(parseFloat(d[expressed]))); })*/
                 .attr("height", function(d, i){
-                    return 450 - yScale(parseFloat(d[expressed]));
+                    return 450 - yScale(Math.abs(parseFloat(d[expressed])));
                 })
                 .attr("y", function(d, i){
                     if (d[expressed] > 0){
-                        return yScale(parseFloat(d[expressed])) + topBottomPadding;
+                        return yScale(Math.abs(parseFloat(d[expressed]))) + topBottomPadding;
                     }
                     else {
                         return 
@@ -226,6 +255,13 @@
                 .attr("transform", translate)
                 .call(yAxis);
 
+     /*           var yAxis = d3.axisLeft(yAxisScale);
+
+
+            chart.append('g')
+                .attr("transform", translate)
+                .call(yAxis);*/
+
             //create frame for chart border
             var chartFrame = chart.append("rect")
                 .attr("class", "chartFrame")
@@ -265,6 +301,7 @@
         
         //function to create color scale generator - NATURAL BREAKS
         function makeColorScale(data){
+
             var colorClasses = [
                 "#ffffcc",
                 "#c2e699",
@@ -276,10 +313,13 @@
             //create color scale generator
             var colorScale = d3
                 .scaleThreshold()
-                .range(colorClasses);
+                .domain([-400, -200, -100, -50, 0, 50, 100, 150])
+                .range(["none", "#762a83", "#9970ab", "#c2a5cf", "#e7d4e8", "grey", "#d9f0d3", "#a6dba0", "#5aae61"]);
+                
+                //.range(colorClasses);
         
             //build array of all values of the expressed attribute
-            var domainArray = [];
+           /* var domainArray = [];
             for (var i=0; i<data.length; i++){
                 var val = parseFloat(data[i][expressed]);
                 domainArray.push(val);
@@ -295,7 +335,7 @@
             domainArray.shift();
         
             //assign array of last 4 cluster minimums as domain
-            colorScale.domain(domainArray);
+            colorScale.domain(domainArray);*/
         
             return colorScale;
         };
