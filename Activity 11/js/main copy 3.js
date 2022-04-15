@@ -10,23 +10,17 @@
     var chartWidth = window.innerWidth * 0.55,
         chartHeight = 460,
         leftPadding = 35,
-        //rightPadding = 2,
+        rightPadding = 2,
         topBottomPadding = 5,
-        //chartInnerWidth = chartWidth - leftPadding - rightPadding,
-        //chartInnerHeight = chartHeight - topBottomPadding * 2,
+        chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
-    var x = d3.scaleLinear()
-        .range([50, 800])//output minimum and maximum - pixel values on the page/map
-        .domain([0, 72]);
-
-    var y = d3.scaleLinear()        
-        .range([450, 50])
-        .domain([-1000, 150]);
     
-    /*var yScale = d3.scaleLinear()
+    
+    var yScale = d3.scaleLinear()
         .range([450, 43])   
-        .domain([-1000, 100]);*/
+        .domain([-1000, 100]);
            
     //create a scale to size bars proportionally to frame and for axis
     
@@ -155,48 +149,31 @@
                     }
             });
 
-            var circles = d3.selectAll(".circle")
-                .attr("id", function(d){
-                    return d[expressed];
-                })
-                //sets radius
-                .attr("r",function(d){
-                    //calculate the circle radius based on populations in array
-                    var area = d[expressed] * 2;//have to set very small because dealing with pixel size and the circle size could potentially engulf the page
-                    if (area !== 0){
-                        return Math.sqrt(area/Math.PI);//converts the area to the radius
-                    }
-                    else{
-                        return 1;//to display something for 0 values
-                    }
-                })
-                //sets circle x coordinate, i refers to the index of the data here
-                //always have to call the data first before the index
-                .attr("cx", function(d, i){
-                    //calls on Linear scale from above and the index
-                    return x(i);//spaces the circle width (horizontal axis) using x values
-                })
-                //sets circle y coordinate
-                .attr("cy", function(d){
-                    //subtracting from the max value at the bottom of the rectangle, multiplied by smaller number to distance is not off page/map
-                    return y(d[expressed]) - 10;//spaces the circle height (verticle axis) using min and max value range from y variable
-                })
-                //applies color values stored within color variable above
-                .style("fill", function(d){
-                    return colorScale(d[expressed]);
-                })                
-                .style("fill", function(d){
-                    var value = d[expressed];
-                    if (value !== 0){
-                        return colorScale(d[expressed]);
-                    }
-                    else{
-                        return "#969696";
-                    }
-                })
-                .style("stroke", "#000"
-                );       
-            
+            //Sort, resize, and recolor bars
+            var circles = d3.selectAll(".circles")
+            //Sort bars
+            .sort(function(a, b){
+                return b[expressed] - a[expressed];
+            })
+            .attr("x", function(d, i){
+                return i * (chartInnerWidth / csvData.length) + leftPadding;
+            })
+            //resize bars
+            .attr("height", function(d, i){
+                return 450 - yScale(parseFloat(d[expressed]));
+            })
+            .attr("y", function(d, i){
+                return yScale(parseFloat(d[expressed])) + topBottomPadding;
+            })
+            //recolor bars
+            .style("fill", function(d){            
+                var value = d[expressed];            
+                if(value) {                
+                    return colorScale(value);            
+                } else {                
+                    return "#969696";            
+                }    
+            });
 
         };
 
@@ -240,12 +217,12 @@
         //Defining y scale more complicated than x; have to consider the minimum and maximum values of the data being used
 
             //find the minimum value of the array without having to physically search the dataset
-            var minNum = d3.min(csvData, function(d){
+            var minPop = d3.min(csvData, function(d){
                 return d[expressed];
             });
 
             //find the maximum value of the array without going through the dataset
-            var maxNum = d3.max(csvData, function(d){
+            var maxPop = d3.max(csvData, function(d){
                 return d[expressed];
             });
             
@@ -263,8 +240,8 @@
                     "#762a83"
                 ])
                 .domain([
-                    minNum,
-                    maxNum
+                    minPop,
+                    maxPop
                 ]);*/
 
             //appends a circle for every item in dataValues array
@@ -315,7 +292,7 @@
                     }
                 })
                 .style("stroke", "#000");//creates a black color stroke around circles
-            //console.log(circles)
+            console.log(circles)
             
             /*function calcStats(data) {
                 var allValues = []; //variable for empty array to hold data values

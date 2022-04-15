@@ -46,42 +46,9 @@ window.onload = function(){
         .attr("y", 50) //position from top on the y (vertical) axis
         .style("fill", "#f7fcf0"); //fill color - can't use bakground-color format here because its used in overall svg element
 
-    //Additional aray examples from Example 2.1 - everything fed to D3 must be in array format, will not accept objects   
-    /*var numbersArray = [1, 2, 3];
-
-    var stringsArray = ["one", "two", "three"];
-        
-    var colorsArray = ["#F00", "#0F0", "#00F"];    
-        
-    var arraysArray = [
-        ['Madison', 23209],
-        ['Milwaukee', 593833],
-        ['Green Bay', 104057]
-        ];*/
     
-    /*var dataValues = [10,20,30,40,50];//test data values for circles
-
-    //appends a circle for every item in dataValues array
-    var circles = container.selectAll(".circles")//placeholder or empty selection because circles have not been created yet
-            .data(dataValues)//calling the multiple data values in the array
-            .enter()//assigns data to empty selection and makes it available for use as new elements are being created
-            .append("circle")//creates a new circle for every item in the array; iterates on its own without a function
-            .attr("class","circle")//set class for the circle
-            //sets radius
-            .attr("r",function(d){
-                return d
-            })
-            //sets circle x coordinate, i refers to the index of the data here
-            //always have to call the data first before the index
-            .attr("cx", function(d, i){
-                return 70 + (i * 180);//spaces the circle width in 180 pixel increments
-            })
-            //sets circle y coordinate
-            .attr("cy", function(d){
-                return 450 - (d * 5);//spaces the circle height in 5 pixel increments
-            });
     
-};*/
+
 
     //array of objects with city and pop values from Week 2
     var cityPop = [
