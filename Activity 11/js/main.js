@@ -3,34 +3,36 @@
 (function(){    
     
     //pseudo-global variables - accessible to all functions that are called within this anonymous function
-    var attrArray = ["yr1970-yr1980", "yr1980-yr1990", "yr1990-yr2000", "yr2000-yr2010", "yr2010-yr2020"]; //list of attributes
-    var expressed = attrArray[0]; //initial attribute
+    var attrArray = ["years 1970-1980", "years 1980-1990", "years 1990-2000", "years 2000-2010", "years 2010-2020"]; //list of attributes    
+    var expressed = attrArray[0]; //initial attribute    
 
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.55,
         chartHeight = 460,
         leftPadding = 35,
-        //rightPadding = 2,
+        rightPadding = 2,
         topBottomPadding = 5,
-        //chartInnerWidth = chartWidth - leftPadding - rightPadding,
-        //chartInnerHeight = chartHeight - topBottomPadding * 2,
+        chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
+        
     var x = d3.scaleLinear()
-        .range([50, 800])//output minimum and maximum - pixel values on the page/map
+        .range([50, chartInnerWidth-20])//output minimum and maximum - pixel values on the page/map
         .domain([0, 72]);
 
     var y = d3.scaleLinear()        
         .range([450, 50])
-        .domain([-1000, 150]);
+        .domain([-1500, 200]);    
+        
+        /*.domain([
+            d3.min(csvData, d => Math.min(d[expressed])),
+            d3.max(csvData, d => Math.max(d[expressed]))
+          ]);*/
     
     /*var yScale = d3.scaleLinear()
         .range([450, 43])   
-        .domain([-1000, 100]);*/
-           
-    //create a scale to size bars proportionally to frame and for axis
-    
-        
+        .domain([-1000, 100]);*/       
 
     //begin script when window loads
     window.onload = setMap();
@@ -106,7 +108,9 @@
             
         };
     };//end of set map function
-    
+
+        
+
         //function to create a DROPDOWN MENU for attribute selection
         function createDropdown(csvData){
             //add select element
@@ -131,8 +135,12 @@
                 .data(attrArray)
                 .enter()
                 .append("option")
-                .attr("value", function(d){ return d })
-                .text(function(d){ return d });
+                .attr("value", function(d){ 
+                    return d;
+                })
+                .text(function(d){ 
+                    return d;
+                });
         };
 
         //dropdown change event handler
@@ -145,6 +153,11 @@
 
             //recolor enumeration units
             var counties = d3.selectAll(".counties")
+                .transition()
+                .delay(function(d,i){
+                    return i * 20
+                })
+                .duration(1500)
                 .style("fill", function (d) {
                     var value = d.properties[expressed];
                     if (value) {
@@ -153,33 +166,67 @@
                     else {
                         return "#969696";
                     }
+            });        
+        
+            var minNum = d3.min(csvData, function(d){
+                return d[expressed];
+            });
+            
+            var maxNum = d3.max(csvData, function(d){                
+                return d[expressed];                
             });
 
+            var yNeg = d3.scaleLinear()
+                .range([450, 50])//NEED TO ADJUST TO GET NEGATIVE CIRCLES POSITIONED PROPERLY
+                .domain([
+                    d3.min(csvData, d => Math.min(d[expressed])),
+                    d3.max(csvData, d => Math.max(d[expressed]))
+                ]);
+        
             var circles = d3.selectAll(".circle")
+                .on("mouseover", function(event, d){//event is referring to element being selected
+                    highlight(d)
+                })
+                .on("mouseout", function(event, d){
+                    dehighlight()
+                })
+                .on("mousemove", moveLabel)
                 .attr("id", function(d){
                     return d[expressed];
                 })
+                .transition()
+                .delay(function(d,i){
+                    return i * 20
+                })
+                .duration(1000)
                 //sets radius
                 .attr("r",function(d){
                     //calculate the circle radius based on populations in array
-                    var area = d[expressed] * 2;//have to set very small because dealing with pixel size and the circle size could potentially engulf the page
-                    if (area !== 0){
+                    var area = Math.abs(d[expressed] * 2);//have to set very small because dealing with pixel size and the circle size could potentially engulf the page
+                    if (area > 0){
                         return Math.sqrt(area/Math.PI);//converts the area to the radius
                     }
-                    else{
+                    else if (area == 0){
                         return 1;//to display something for 0 values
                     }
+                    else{
+                        return Math.abs(Math.sqrt(area/Math.PI));
+                    }
                 })
-                //sets circle x coordinate, i refers to the index of the data here
-                //always have to call the data first before the index
+                
                 .attr("cx", function(d, i){
                     //calls on Linear scale from above and the index
                     return x(i);//spaces the circle width (horizontal axis) using x values
                 })
                 //sets circle y coordinate
                 .attr("cy", function(d){
-                    //subtracting from the max value at the bottom of the rectangle, multiplied by smaller number to distance is not off page/map
-                    return y(d[expressed]) - 10;//spaces the circle height (verticle axis) using min and max value range from y variable
+                    var value = d[expressed];
+                    if (value >= 0){
+                        return y(parseFloat(d[expressed])) - 10;
+                    }
+                    else{
+                        return Math.min(yNeg(d[expressed])), Math.max(yNeg(d[expressed]))
+                    }
                 })
                 //applies color values stored within color variable above
                 .style("fill", function(d){
@@ -197,8 +244,10 @@
                 .style("stroke", "#000"
                 );       
             
-
+            var chartTitle = d3.select(".chartTitle")
+                .text("Percent Change in NRHP Listings for " + expressed + " in each County")
         };
+
 
         //function to create coordinated bar chart - axis scale
         function setChart(csvData, colorScale){
@@ -206,7 +255,7 @@
             var chart = d3.select("body") //get the <body> HTML element from the DOM
                 //method chaining
                 .append("svg") //put a new svg in the body
-                .attr("width", chartWidth) //assign the width set to w
+                .attr("width", chartWidth)  //assign the width set to w
                 .attr("height", chartHeight) //assign the height set to h
                 //can also go into css and set background styles using the class = .container
                 .attr("class", "chart") //always assign a class (as the block name) for styling and future selection
@@ -215,96 +264,88 @@
 
                 //console.log(chart);            
 
-            //Example 1.8 appending innerRect block to the container variable
+            //appending innerRect block to the container variable
             var innerRect = chart.append("rect")
                 .datum(400) //a single value is a DATUM - method applied to the variable
-                .attr("width", function(d){ //rectangle width using the datum with a function
-                    return d * 1.95; // using datum, always called by 'd' 400 * 2 = 800
-                })
+                .attr("width", chartInnerWidth - 40)
                 .attr("height", function(d){ //rectangle height using the datum with a function
                     return d; //using datum 400
                 })
                 .attr("class", "innerRect") //class name
                 .attr("x", 40) //position from left on the x (horizontal) axis
                 .attr("y", 40) //position from top on the y (vertical) axis
-                .style("fill", "#f7fcf0"); //fill color - can't use bakground-color format here because its used in overall svg element
+                .style("fill", "#f7fcf0");             
 
-            //create a linear scale to convert data without having to find precise coefficient manually
-            //Linear is one of several scale options offered by D3
-            //Scale must be defined above functions that use it or it will not be applied
-            var x = d3.scaleLinear()//crates a generator - custom functiondeciding the range of each output value
-                //left(west) extent, right(east) extent
-                .range([50, 800])//output minimum and maximum - pixel values on the page/map
-                .domain([0, 72]);//input minimum and maximum - info we are putting into the function - INDEX OF THE ARRAY OBJECTS 0,1,2,3
-
-        //Defining y scale more complicated than x; have to consider the minimum and maximum values of the data being used
-
-            //find the minimum value of the array without having to physically search the dataset
-            var minNum = d3.min(csvData, function(d){
-                return d[expressed];
-            });
-
-            //find the maximum value of the array without going through the dataset
-            var maxNum = d3.max(csvData, function(d){
-                return d[expressed];
-            });
+            /*var x = d3.scaleLinear()
+                .range([50, chartInnerWidth-20])
+                .domain([0, 72]);
             
-            var y = d3.scaleLinear()
-                //lower (south) extent of rectangle(left), upper (north) extent(right)
+            var y = d3.scaleLinear()                
                 .range([450, 50])
-                .domain([-1000, 150]);
-
-            //Generating color scales
-            /*var color = d3.scaleLinear()
-                //two color values entered - D3 knows how to interpolate color values - based on rgb codes
-                //arranged in smaller to larger format - D3 will interpolate the colr range based on the input here
-                .range([
-                    "#e7d4e8",
-                    "#762a83"
-                ])
-                .domain([
-                    minNum,
-                    maxNum
-                ]);*/
+                .domain([-1500, 200]);*/             
 
             //appends a circle for every item in dataValues array
-            var circles = chart.selectAll(".circles")//placeholder or empty selection because circles have not been created yet - USE CLASS NAME IN EMPTY SELECTION
-                .data(csvData)//calling the multiple data values in the array variable; set to dataValues or cityPop depending on data source
-                .enter()//assigns data to empty selection and makes it available for use as new elements are being created
-                .append("circle")//creates a new circle for every item in the array; iterates on its own without a function
-                .attr("class","circles")//set class for the circle, MUST MATCH WHAT IS IN SELECTALL FUNCTION
+            var circles = chart.selectAll(".circle")                
+                .data(csvData)
+                .enter()
+                .append("circle")
+                .attr("class","circles")
                 .attr("class", function(d){
                     return "circle " + d.NAME;
                 })
+                .on("mouseover", function(event, d){//event is referring to element being selected
+                    highlight(d)
+                })
+                .on("mouseout", function(event, d){
+                    dehighlight()
+                })
+                .on("mousemove", moveLabel)
+                .attr("id", function(d){
+                    return d[expressed];
+                })
+                .transition()
+                .delay(function(d,i){
+                    return i * 20
+                })
+                .duration(1000)
+                
+                //sets radius
                 .attr("id", function(d){
                     return d[expressed];
                 })
                 //sets radius
                 .attr("r",function(d){
                     //calculate the circle radius based on populations in array
-                    var area = d[expressed] * 2;//have to set very small because dealing with pixel size and the circle size could potentially engulf the page
-                    if (area !== 0){
+                    var area = Math.abs(d[expressed] * 2);//have to set very small because dealing with pixel size and the circle size could potentially engulf the page
+                    if (area > 0){
                         return Math.sqrt(area/Math.PI);//converts the area to the radius
                     }
-                    else{
+                    else if (area == 0){
                         return 1;//to display something for 0 values
                     }
+                    else{
+                        return Math.abs(Math.sqrt(area/Math.PI));
+                    }
                 })
-                //sets circle x coordinate, i refers to the index of the data here
-                //always have to call the data first before the index
+                
                 .attr("cx", function(d, i){
                     //calls on Linear scale from above and the index
                     return x(i);//spaces the circle width (horizontal axis) using x values
                 })
                 //sets circle y coordinate
                 .attr("cy", function(d){
-                    //subtracting from the max value at the bottom of the rectangle, multiplied by smaller number to distance is not off page/map
-                    return y(d[expressed]) - 10;//spaces the circle height (verticle axis) using min and max value range from y variable
+                    var value = d[expressed];
+                    if (value >= 0){
+                        return y(parseFloat(d[expressed])) - 10;
+                    }
+                    else{
+                        return Math.min(yNeg(d[expressed])), Math.max(yNeg(d[expressed]))
+                    }
                 })
                 //applies color values stored within color variable above
                 .style("fill", function(d){
                     return colorScale(d[expressed]);
-                })
+                })                
                 .style("fill", function(d){
                     var value = d[expressed];
                     if (value !== 0){
@@ -314,46 +355,10 @@
                         return "#969696";
                     }
                 })
-                .style("stroke", "#000");//creates a black color stroke around circles
-            //console.log(circles)
-            
-            /*function calcStats(data) {
-                var allValues = []; //variable for empty array to hold data values
-                //for loop to iterate through the array in Deadliest Tornadoes geojson
-                for(var state of data.features) {
-                    //another loop to iterate through each year in the array and retirve pop
-                    for(var year = 2010; year <= 2020; year +=1) {
-                        var value = state.properties[String(year)+" Deaths"];
-                        //console.log(value)
-                        //push the population values to the empty array above
-                        allValues.push(value);            
-                    }
-                }
-                //get min, max, mean stats for the array
-                dataStats.min = Math.min(...allValues);
-                dataStats.max = Math.max(...allValues);
-                //Calculate meanValue
-                var sum = allValues.reduce(function(a,b){
-                    return a+b;
-                });
-                dataStats.mean = sum / allValues.length;    
-            };
-            
-            //function to calculate the radius of the proportional symbols
-            function calcPropRadius(attValue) {
-                //variable to hold number used in formula below to size Prop sybols evenly
-                var minRadius = 3
-                //Flannery Appearance Compensation formula held in new variable
-                //replaced minRadius in equation with 1, zeros return NaN or Infinity
-                var radius = 1.0083 * Math.pow(attValue/1, 0.5715) * minRadius
-                
-                console.log(radius)
-                //return the radius of each symbol
-                return radius;
-            };*/
-
-
-            
+                .style("stroke", "#000"
+                );
+            //console.log(circles)    
+               
             var yAxis = d3.axisLeft(y);//creating a y axis generator
 
             var axis = chart.append("g")//creating an axis g element and adding it to the axis
@@ -371,7 +376,7 @@
                 .text("Percent Change in NRHP Listings for " + expressed + " in each County")//text content
                 //.style("fill", "#810f7c");
 
-            //creating circle labels
+            /*//creating circle labels
             var labels = chart.selectAll(".labels")
                 .data(csvData.length)
                 .enter()
@@ -381,8 +386,7 @@
                 .attr("y", function(d){
                     //vertical position centered on each circle
                     return y(d[expressed]) - 2;//adjusted to center the label block on the circles
-                });
-                
+                });                
             
             //creating the first line in the label
             var nameLine = labels.append("tspan")
@@ -394,7 +398,6 @@
                 .text(function(d){
                     return d.NAME;
                 });
-
             
             var format = d3.format(",");//generates commas to where applied
 
@@ -407,9 +410,7 @@
                 .attr("dy", "15")
                 .text(function(d){
                     return "Percent " + format(d[expressed]);
-                });
-
-                
+                });*/                            
         };
 
         //function for data join    
@@ -450,42 +451,10 @@
                 .domain([-1000, -500, -250, -100, -50, -1, 0, 1, 50, 100])
                 .range(["#3f007d", "#54278f", "#6a51a3", "#807dba", "#9e9ac8", "#bcbddc", "#969696", "#edf8e9", "#74c476", "#31a354", "#006d2c"]);
             
-            return colorScale;
+            return colorScale;            
             
-            /*var colorClasses = [
-                "#ffffcc",
-                "#c2e699",
-                "#78c679",
-                "#31a354",
-                "#006837"
-            ];
-        
-            //create color scale generator
-            var colorScale = d3
-                .scaleThreshold()
-                .range(colorClasses);
-        
-            //build array of all values of the expressed attribute
-            var domainArray = [];
-            for (var i=0; i<data.length; i++){
-                var val = parseFloat(data[i][expressed]);
-                domainArray.push(val);
-            };
-        
-            //cluster data using ckmeans clustering algorithm to create natural breaks
-            var clusters = ss.ckmeans(domainArray, 5);
-            //reset domain array to cluster minimums
-            domainArray = clusters.map(function(d){
-                return d3.min(d);
-            });
-            //remove first value from domain array to create class breakpoints
-            domainArray.shift();
-        
-            //assign array of last 4 cluster minimums as domain
-            colorScale.domain(domainArray);
-        
-            return colorScale;*/
         };
+
         //function for graticule
         function setGraticule(map, path){
             //create graticule generator with lines at 5 deg lat/long increments
@@ -509,6 +478,71 @@
                 .attr("class", "gratLines")
                 .attr("d", path);
             };
+
+        function highlight(props){
+            //change stroke
+            var selected = d3.selectAll("." + props.NAME)
+                .style("stroke", "blue")
+                .style("stroke-width", "3")
+                setLabel(props);//calling set label
+        }
+
+        function dehighlight(){
+            //change stroke
+            var counties = d3.selectAll(".counties")
+                .style("stroke", "rgb(250, 250, 250)")
+                .style("stroke-width", "0.75")
+
+            var circles = d3.selectAll(".circle")
+                .style("stroke", "#000")
+                .style("stroke-width", "0.2")
+
+                d3.select(".infolabel")
+                    .remove();
+        };        
+            
+        //function to create dynamic label
+        function setLabel(props){
+            //label content
+            var labelAttribute = "<h1>" + props[expressed] + "%" +
+                "</h1><b>" + expressed + "</b>";
+
+            //create info label div
+            var infolabel = d3.select("body")
+                .append("div")
+                .attr("class", "infolabel")
+                .attr("id", props.NAME + "_label")
+                .html(labelAttribute);
+
+            var countyName = infolabel.append("div")
+                .attr("class", "labelname")
+                .html("</h1><b>" + props.NAME +" County"+"</b>");            
+        };
+
+        //function to move info label with mouse
+        function moveLabel(){
+            //get width of label
+            var labelWidth = d3.select(".infolabel")
+                .node()
+                .getBoundingClientRect()
+                .width;
+
+            //use coordinates of mousemove event to set label coordinates
+            var x1 = event.clientX + 10,
+                y1 = event.clientY - 75,
+                x2 = event.clientX - labelWidth - 10,
+                y2 = event.clientY + 25;
+
+            //horizontal label coordinate, testing for overflow
+            var x = event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1; 
+            //vertical label coordinate, testing for overflow
+            var y = event.clientY < 75 ? y2 : y1; 
+
+            d3.select(".infolabel")
+                .style("left", x + "px")
+                .style("top", y + "px");
+        };
+
         //function to iterate and add counties
         function setEnumerationUnits(countyNRHP, map, path, colorScale){
             //adding WI counties to the map
@@ -529,7 +563,14 @@
                     else{
                         return "#969696";//will return no value or 0 value as grey
                     }                        
-                });               
+                })
+                .on("mouseover", function(event, d){//event is referring to element being selected
+                    highlight(d.properties)
+                })
+                .on("mouseout", function(event, d){
+                    dehighlight()
+                })
+                .on("mousemove", moveLabel);               
             };        
     
 })();

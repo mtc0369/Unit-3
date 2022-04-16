@@ -15,9 +15,7 @@
         chartInnerWidth = chartWidth - leftPadding - rightPadding,
         chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
-
-    
-    
+     
     var yScale = d3.scaleLinear()
         .range([450, 43])   
         .domain([-1000, 100]);
