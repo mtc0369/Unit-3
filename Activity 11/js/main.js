@@ -18,12 +18,12 @@
 
         
     var x = d3.scaleLinear()
-        .range([50, chartInnerWidth-20])//output minimum and maximum - pixel values on the page/map
+        .range([60, chartInnerWidth-20])//output minimum and maximum - pixel values on the page/map
         .domain([0, 72]);
 
     var y = d3.scaleLinear()        
         .range([450, 50])
-        .domain([-1500, 200]);    
+        .domain([-1200, 200]);    
         
         /*.domain([
             d3.min(csvData, d => Math.min(d[expressed])),
@@ -107,9 +107,7 @@
             createDropdown(csvData);
             
         };
-    };//end of set map function
-
-        
+    };//end of set map function        
 
         //function to create a DROPDOWN MENU for attribute selection
         function createDropdown(csvData){
@@ -168,7 +166,7 @@
                     }
             });        
         
-            var minNum = d3.min(csvData, function(d){
+            /*var minNum = d3.min(csvData, function(d){
                 return d[expressed];
             });
             
@@ -177,11 +175,10 @@
             });
 
             var yNeg = d3.scaleLinear()
-                .range([450, 50])//NEED TO ADJUST TO GET NEGATIVE CIRCLES POSITIONED PROPERLY
+                .range([450, 0])//NEED TO ADJUST TO GET NEGATIVE CIRCLES POSITIONED PROPERLY
                 .domain([
-                    d3.min(csvData, d => Math.min(d[expressed])),
-                    d3.max(csvData, d => Math.max(d[expressed]))
-                ]);
+                    -2500,0
+                ]);*/
         
             var circles = d3.selectAll(".circle")
                 .on("mouseover", function(event, d){//event is referring to element being selected
@@ -225,7 +222,7 @@
                         return y(parseFloat(d[expressed])) - 10;
                     }
                     else{
-                        return Math.min(yNeg(d[expressed])), Math.max(yNeg(d[expressed]))
+                        return Math.min(y(d[expressed])), Math.max(y(d[expressed])) - 10
                     }
                 })
                 //applies color values stored within color variable above
@@ -260,9 +257,7 @@
                 //can also go into css and set background styles using the class = .container
                 .attr("class", "chart") //always assign a class (as the block name) for styling and future selection
                 //need to add a background color to see what is happening in the svg block
-                .style("background-color", "rgba(0,109,44,0.5)"); //only put a semicolon at the end of the block!
-
-                //console.log(chart);            
+                .style("background-color", "rgba(0,109,44,0.5)"); //only put a semicolon at the end of the block!                            
 
             //appending innerRect block to the container variable
             var innerRect = chart.append("rect")
@@ -324,7 +319,7 @@
                         return 1;//to display something for 0 values
                     }
                     else{
-                        return Math.abs(Math.sqrt(area/Math.PI));
+                        return Math.abs(Math.sqrt(area/Math.PI));//to read negative values
                     }
                 })
                 
@@ -339,7 +334,7 @@
                         return y(parseFloat(d[expressed])) - 10;
                     }
                     else{
-                        return Math.min(yNeg(d[expressed])), Math.max(yNeg(d[expressed]))
+                        return Math.min(y(d[expressed])), Math.max(y(d[expressed]))
                     }
                 })
                 //applies color values stored within color variable above
@@ -357,7 +352,7 @@
                 })
                 .style("stroke", "#000"
                 );
-            //console.log(circles)    
+            //console.log(circles)*/   
                
             var yAxis = d3.axisLeft(y);//creating a y axis generator
 
@@ -375,42 +370,7 @@
                 .attr("y", 25)//assign verticle position
                 .text("Percent Change in NRHP Listings for " + expressed + " in each County")//text content
                 //.style("fill", "#810f7c");
-
-            /*//creating circle labels
-            var labels = chart.selectAll(".labels")
-                .data(csvData.length)
-                .enter()
-                .append("text")
-                .attr("class", "labels")
-                .attr("text-anchor", "left")                
-                .attr("y", function(d){
-                    //vertical position centered on each circle
-                    return y(d[expressed]) - 2;//adjusted to center the label block on the circles
-                });                
             
-            //creating the first line in the label
-            var nameLine = labels.append("tspan")
-                .attr("class", "nameLine")
-                .attr("x", function(d,i){
-                    return x(i) + Math.sqrt(d[expressed] * 0.01 / Math.PI) + 5;
-                })
-                //returns the county name
-                .text(function(d){
-                    return d.NAME;
-                });
-            
-            var format = d3.format(",");//generates commas to where applied
-
-            //creating the second line in the label
-            var popLine = labels.append("tspan")
-                .attr("class", "popLine")
-                .attr("x", function(d,i){
-                    return x(i) + Math.sqrt(d[expressed] * 0.01 / Math.PI) + 5;
-                })
-                .attr("dy", "15")
-                .text(function(d){
-                    return "Percent " + format(d[expressed]);
-                });*/                            
         };
 
         //function for data join    
