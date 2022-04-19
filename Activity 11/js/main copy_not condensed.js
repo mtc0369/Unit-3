@@ -16,23 +16,32 @@
         chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
+        
     var x = d3.scaleLinear()
         .range([60, chartInnerWidth-20])//output minimum and maximum - pixel values on the page/map
         .domain([0, 72]);
 
     var y = d3.scaleLinear()        
         .range([450, 50])
-        .domain([-1200, 200]);
-
-    //create map frame    
-    var width = window.innerWidth * 0.4,//had to make map width smaller to accompdate large bar chart
-        height = 460;    
+        .domain([-1200, 200]);    
         
+        /*.domain([
+            d3.min(csvData, d => Math.min(d[expressed])),
+            d3.max(csvData, d => Math.max(d[expressed]))
+          ]);*/
+    
+    /*var yScale = d3.scaleLinear()
+        .range([450, 43])   
+        .domain([-1000, 100]);*/       
+
     //begin script when window loads
     window.onload = setMap();
 
     //set up choropleth map
-    function setMap(){                
+    function setMap(){
+        //create map frame
+        var width = window.innerWidth * 0.4,//had to make map width smaller to accompdate large bar chart
+            height = 460;
 
         //create svg container for the map
         var map = d3
@@ -40,44 +49,8 @@
             .append("svg")
             .attr("class", "map")
             .attr("width", width)
-            .attr("height", height)                                      
+            .attr("height", height)
             //.style("background-color", "rgba(0,109,44,0.5)");
-
-        /*var zooming = function(d) {
-            var offset = [d3.event.transform.x, d3.event.transform.y];
-
-            var newScale = d3.event.transform.k *2000;
-
-            projection.translate(offset)
-                        .scale(newScale);
-
-            map.selectAll("path")
-                .attr("d", path);
-
-            map.selectAll(".counties")
-                .attr("x", function(d){
-                    return projection([d.lon, d.lat])[0];
-                })
-                .attr("y", function(d){
-                    return projection([d.lon, d.lat])[1];
-                });
-        }
-        var zoom = d3.zoom()
-                    .on("zoom", zooming);
-
-        var projection = d3
-            .geoAlbers()
-            .center([0, 44.8])
-            .rotate([89.8, 0, 0])//long, lat, angle
-            .parallels([42, 46]);
-
-        var map1 = map.append("g")
-                    .attr("id", "map")
-                    .call(zoom)
-                    .call(zoom.transform, d3.zoomIdentity
-                        .translate(width / 2, height / 2)
-                        .scale(0.25)
-                        .translate(-projection[0], -projection[1]));*/
 
         //projection generator - create Albers equal area projection centered on WI
         var projection = d3
@@ -88,7 +61,6 @@
             .scale(5500)//pixel scale/zoom level - converts projection to pixel value
             //moves map to be half width and height of map frame - not necessary if adjustments made in .center; however, will auto center the map when changing parameters
             .translate([width / 2, height / 2]);//or adding components like the bar chart to the DOM
-            
 
         //define path with generator - converts projection into usable object
         var path = d3
@@ -99,64 +71,7 @@
         var promises = [d3.csv("data/NRHP_List_Wisconsin_Final.csv"),
                     d3.json("data/WI_SurroundStates.topojson"),
                     d3.json("data/Wisconsin_Counties.topojson")];
-                    Promise.all(promises).then(callback);
-        
-        /*function zoom(selection) {
-            selection
-                .property("__zoom", defaultTransform)
-                .on("wheel.zoom", wheeled, {passive: false})
-                .on("mousedown.zoom", mousedowned)
-                .on("dblclick.zoom", dblclicked)
-                .filter(touchable)
-                .on("touchstart.zoom", touchstarted)
-                .on("touchmove.zoom", touchmoved)
-                .on("touchend.zoom touchcancel.zoom", touchended)
-                .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-        }
-
-        zoom.transform = function(collection, transform, point, event) {
-            var selection = collection.selection ? collection.selection() : collection;
-            selection.property("__zoom", defaultTransform);
-            if (collection !== selection) {
-                schedule(collection, transform, point, event);
-            } else {
-                selection.interrupt().each(function() {
-                gesture(this, arguments)
-                    .event(event)
-                    .start()
-                    .zoom(null, typeof transform === "function" ? transform.apply(this, arguments) : transform)
-                    .end();
-                });
-            }
-            };*/
-        
-        /*function zoom(d){
-            var zoomSettings = {
-                duration: 1000,
-                ease: d3.easeCubicOut,
-                zoomLevel: 5}
-            var x;
-            var y;
-            var zoomLevel;
-
-            if (d[expressed] && centered !== d[expressed]){
-                var centroid = path.centroid(d[expressed]);
-                x = centroid[0];
-                y = centroid[1];
-                zoomLevel = zoomSettings.zoomLevel;
-                centered = d[expressed];
-            }
-            else {
-                x = width / 2;
-                y = height / 2;
-                zoomLevel = 1;
-                centered = null;
-            }
-            map.transition()
-                .duration(zoomSettings.duration)
-                .ease(zoomSettings.ease)
-                .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')scale(' + zoomLevel + ')translate(' + -x + ',' + -y + ')');
-        };*/        
+                    Promise.all(promises).then(callback);                 
 
         //data parameter - retrieves data as an array
         function callback(data){ 
@@ -190,8 +105,6 @@
 
             //calling create dropdown
             createDropdown(csvData);
-            
-            countyDropdown(countyNRHP);            
             
         };
     };//end of set map function        
@@ -252,10 +165,88 @@
                         return "#969696";
                     }
             });        
+        
+            /*var minNum = d3.min(csvData, function(d){
+                return d[expressed];
+            });
+            
+            var maxNum = d3.max(csvData, function(d){                
+                return d[expressed];                
+            });
+
+            var yNeg = d3.scaleLinear()
+                .range([450, 0])//NEED TO ADJUST TO GET NEGATIVE CIRCLES POSITIONED PROPERLY
+                .domain([
+                    -2500,0
+                ]);*/
+        
             var circles = d3.selectAll(".circle")
 
-            updateChart(circles, csvData.length, colorScale);                
+            updateChart(circles, csvData.length, colorScale);
+                /*.on("mouseover", function(event, d){//event is referring to element being selected
+                    highlight(d)
+                })
+                .on("mouseout", function(event, d){
+                    dehighlight()
+                })
+                .on("mousemove", moveLabel)
+                .attr("id", function(d){
+                    return d[expressed];
+                })
+                .transition()
+                .delay(function(d,i){
+                    return i * 20
+                })
+                .duration(1000)
+                //sets radius
+                .attr("r",function(d){
+                    //calculate the circle radius based on populations in array
+                    var area = Math.abs(d[expressed] * 2);//have to set very small because dealing with pixel size and the circle size could potentially engulf the page
+                    if (area > 0){
+                        return Math.sqrt(area/Math.PI);//converts the area to the radius
+                    }
+                    else if (area == 0){
+                        return 1;//to display something for 0 values
+                    }
+                    else{
+                        return Math.abs(Math.sqrt(area/Math.PI));
+                    }
+                })
+                
+                .attr("cx", function(d, i){
+                    //calls on Linear scale from above and the index
+                    return x(i);//spaces the circle width (horizontal axis) using x values
+                })
+                //sets circle y coordinate
+                .attr("cy", function(d){
+                    var value = d[expressed];
+                    if (value >= 0){
+                        return y(parseFloat(d[expressed])) - 10;
+                    }
+                    else{
+                        return Math.min(y(d[expressed])), Math.max(y(d[expressed])) - 10
+                    }
+                })
+                //applies color values stored within color variable above
+                .style("fill", function(d){
+                    return colorScale(d[expressed]);
+                })                
+                .style("fill", function(d){
+                    var value = d[expressed];
+                    if (value !== 0){
+                        return colorScale(d[expressed]);
+                    }
+                    else{
+                        return "#969696";
+                    }
+                })
+                .style("stroke", "#000"
+                );       
+            
+            var chartTitle = d3.select(".chartTitle")
+                .text("Percent Change in NRHP Listings for " + expressed + " in each County")*/
         };
+
 
         //function to create coordinated bar chart - axis scale
         function setChart(csvData, colorScale){
@@ -264,8 +255,10 @@
                 //method chaining
                 .append("svg") //put a new svg in the body
                 .attr("width", chartWidth)  //assign the width set to w
-                .attr("height", chartHeight) //assign the height set to h                
-                .attr("class", "chart") //always assign a class (as the block name) for styling and future selection                
+                .attr("height", chartHeight) //assign the height set to h
+                //can also go into css and set background styles using the class = .container
+                .attr("class", "chart") //always assign a class (as the block name) for styling and future selection
+                //need to add a background color to see what is happening in the svg block
                 .style("background-color", "rgba(0,109,44,0.5)"); //only put a semicolon at the end of the block!                            
 
             //appending innerRect block to the container variable
@@ -278,7 +271,15 @@
                 .attr("class", "innerRect") //class name
                 .attr("x", 40) //position from left on the x (horizontal) axis
                 .attr("y", 40) //position from top on the y (vertical) axis
-                .style("fill", "#f7fcf0");        
+                .style("fill", "#f7fcf0");             
+
+            /*var x = d3.scaleLinear()
+                .range([50, chartInnerWidth-20])
+                .domain([0, 72]);
+            
+            var y = d3.scaleLinear()                
+                .range([450, 50])
+                .domain([-1500, 200]);*/             
 
             //appends a circle for every item in dataValues array
             var circles = chart.selectAll(".circle")                
@@ -288,13 +289,78 @@
                 .attr("class","circles")
                 .attr("class", function(d){
                     return "circle " + d.NAME;
+                })
+                /*.on("mouseover", function(event, d){//event is referring to element being selected
+                    highlight(d)
+                })
+                .on("mouseout", function(event, d){
+                    dehighlight()
+                })
+                .on("mousemove", moveLabel)
+                .attr("id", function(d){
+                    return d[expressed];
+                })
+                .transition()
+                .delay(function(d,i){
+                    return i * 20
+                })
+                .duration(1000)
+                
+                //sets radius
+                .attr("id", function(d){
+                    return d[expressed];
+                })
+                //sets radius
+                .attr("r",function(d){
+                    //calculate the circle radius based on populations in array
+                    var area = Math.abs(d[expressed] * 2);//have to set very small because dealing with pixel size and the circle size could potentially engulf the page
+                    if (area > 0){
+                        return Math.sqrt(area/Math.PI);//converts the area to the radius
+                    }
+                    else if (area == 0){
+                        return 1;//to display something for 0 values
+                    }
+                    else{
+                        return Math.abs(Math.sqrt(area/Math.PI));//to read negative values
+                    }
+                })
+                
+                .attr("cx", function(d, i){
+                    //calls on Linear scale from above and the index
+                    return x(i);//spaces the circle width (horizontal axis) using x values
+                })
+                //sets circle y coordinate
+                .attr("cy", function(d){
+                    var value = d[expressed];
+                    if (value >= 0){
+                        return y(parseFloat(d[expressed])) - 10;
+                    }
+                    else{
+                        return Math.min(y(d[expressed])), Math.max(y(d[expressed]))
+                    }
+                })
+                //applies color values stored within color variable above
+                .style("fill", function(d){
+                    return colorScale(d[expressed]);
                 })                
+                .style("fill", function(d){
+                    var value = d[expressed];
+                    if (value !== 0){
+                        return colorScale(d[expressed]);
+                    }
+                    else{
+                        return "#969696";
+                    }
+                })
+                .style("stroke", "#000"
+                );
+            //console.log(circles)*/   
                
             var yAxis = d3.axisLeft(y);//creating a y axis generator
 
             var axis = chart.append("g")//creating an axis g element and adding it to the axis
                 .attr("class", "axis")
-                .attr("transform", "translate(40, -10)")
+                .attr("transform", "translate(40, -10)")//Example 3.9 transforming attr to the g-element; translate moves axis to the right of the 0,0 corrdinate(in view) by entering 50
                 //basically translates the x,y coordinates of the axis
                 .call(yAxis);
             
@@ -313,7 +379,7 @@
                 .attr("text-anchor", "middle")//centers the text - without this centering would have to be done by offsetting x coordinate value
                 .attr("x", chartWidth / 2)//assigns horizontal position
                 .attr("y", 455)//assign verticle position
-                .text("* Extreme outliers not shown on chart: St. Croix County (1990-2000) = -2400%; Grant County (2010-2020) = -1500%")//text content
+                .text("* Extreme Outliers outside of chart limits: St. Croix County (1990-2000) = -2400%; Grant County (2010-2020) = -1500%")//text content
                 //.style("fill", "#810f7c");
             updateChart(circles, csvData.length, colorScale);
         };
@@ -343,7 +409,7 @@
                 };
                 
             };
-            //console.log(countyNRHP)
+            console.log(countyNRHP)
             return countyNRHP;
         };
         
@@ -356,7 +422,8 @@
                 .domain([-1000, -500, -250, -100, -50, -1, 0, 1, 50, 100])
                 .range(["#3f007d", "#54278f", "#6a51a3", "#807dba", "#9e9ac8", "#bcbddc", "#969696", "#edf8e9", "#74c476", "#31a354", "#006d2c"]);
             
-            return colorScale; 
+            return colorScale;            
+            
         };
 
         //function for graticule
@@ -381,7 +448,7 @@
                 .append("path")
                 .attr("class", "gratLines")
                 .attr("d", path);
-        };
+            };
 
         function highlight(props){
             //change stroke
@@ -389,7 +456,7 @@
                 .style("stroke", "blue")
                 .style("stroke-width", "3")
                 setLabel(props);//calling set label
-        };
+        }
 
         function dehighlight(){
             //change stroke
@@ -447,7 +514,6 @@
                 .style("top", y + "px");
         };
 
-        
         function updateChart(circles, csvData, colorScale){
             circles.on("mouseover", function(event, d){//event is referring to element being selected
                 highlight(d)
@@ -478,8 +544,9 @@
                     return Math.abs(Math.sqrt(area/Math.PI));
                 }
             })
-            //sets circle x coordinate            
-            .attr("cx", function(d, i){                
+            
+            .attr("cx", function(d, i){
+                //calls on Linear scale from above and the index
                 return x(i);//spaces the circle width (horizontal axis) using x values
             })
             //sets circle y coordinate
@@ -510,42 +577,10 @@
         
         var chartTitle = d3.select(".chartTitle")
             .text("Percent Change in NRHP Listings for " + expressed + " in each County")
-        };
-        
-        /*function countyDropdown(countyNRHP){
-            //add select element
-            var countyDrop = d3
-                .select("body")
-                .append("select")
-                .attr("class", "countyDrop")
-                .on("change", function(){
-                    changeAttribute(this.value, countyNRHP)                    
-                });
-
-            //add initial option
-            var titleOption = countyDrop
-                .append("option")
-                .attr("class", "titleOption")
-                .attr("disabled", "true")
-                .text("Select County");
-
-            //add attribute name options
-            var attrOptions = countyDrop
-                .selectAll("attrOptions")
-                .data(countyNRHP)
-                .enter()
-                .append("option")
-                .attr("value", function(d){ 
-                    return d;
-                })
-                .text(function(d){ 
-                    return d;
-                });
-        };*/
+        };     
 
         //function to iterate and add counties
         function setEnumerationUnits(countyNRHP, map, path, colorScale){
-            
             //adding WI counties to the map
             var countyFeatures = map
                 .selectAll(".counties")
@@ -571,10 +606,8 @@
                 .on("mouseout", function(event, d){
                     dehighlight()
                 })
-                .on("mousemove", moveLabel)
-                                               
-        };        
-        
+                .on("mousemove", moveLabel);               
+            };        
     
 })();
 
