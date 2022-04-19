@@ -1,0 +1,144 @@
+/*Add CSS styles here*/
+
+body{
+    margin:0;     
+}
+/*styling for title*/
+#title {
+    padding: 2px;
+    text-align: center;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 5px;
+    font-size:20px;
+    font-family: Arial;    
+    color:#fff;
+    background-color: rgb(80, 112, 255, 0.9);
+    display: center;
+}
+/*styling for metadata*/
+#meta_text {
+    font-size:10px;    
+    color:#fff;
+}
+/*styling for info textbox*/
+#info_text {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 2px;    
+    font-size:13.5px;
+    text-align: justify;        
+    color:#fff;
+    background-color: rgb(80, 112, 255, 0.9);   
+    width: 255px;
+    height: calc(100vh - 400px);
+    overflow-y:auto;
+    border-radius: 10px;
+}
+/*styling for state popups*/
+.custom-popup .leaflet-popup-content p {
+    margin: 0.2em 0;    
+    /*display:inline;*/
+}
+/*styling for state popups*/
+.custom-popup .leaflet-popup-content-wrapper {
+    background:#3093f7;
+    color:#fff;
+    text-align: center;
+    font-size:16px;
+    border-radius: 20px;
+    border: 2px black solid;
+    /*box-shadow:50% 50%;*/ 
+}
+/*styling for state popups*/
+.custom-popup .leaflet-popup-tip {
+    background:#95c6f7;
+    }
+/*styling for imported tornado image*/
+.popupImage {
+    max-width: 15%;
+    max-height: 15%;        
+    }
+/*styling for map*/
+#mapid{
+    height:90vh;
+    width:100%;
+    display: inline-block;
+}
+/*styling for range slider container*/
+.sequence-control-container {
+    width: 350px;
+    height: 35px;
+    background-color: rgba(255,255,255,0.7);  
+    padding: 10px;  
+    line-height: 30px;  
+    text-align: center;  
+    border: solid gray 1px;
+    border-radius: 10px;
+}
+/*styling for range slider - defaults disabled*/
+.range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 75%; 
+    height: 8px; 
+    background: #74c4f1; 
+    outline: none;    
+    opacity: 0.7; 
+    -webkit-transition: .2s; 
+    transition: opacity .2s;
+    vertical-align: 35%;   
+}
+/*styling for range slider - defaults disabled*/
+.range-slider:hover {
+    opacity: 1; 
+}
+/*styling for range slider - defaults disabled*/
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; 
+    appearance: none;
+    width: 20px; 
+    height: 20px; 
+    border-radius: 50%;
+    background: #3093f7;     
+    cursor: pointer; 
+}
+/*styling for range slider - defaults disabled*/  
+.range-slider::-moz-range-thumb {
+    width: 20px; 
+    height: 20px; 
+    border-radius: 50%;
+    background: #3093f7;     
+    cursor: pointer; 
+}
+/*range slider step length*/
+.step {
+    width: 40px;
+}
+
+.step img {
+    width: 100%;
+    height: auto;         
+}
+/*styling for legend*/
+.legend-control-container {
+    width: 260px;
+    height: 220px;
+    background: #fafafa;
+    border-radius: 10%;
+    opacity: 0.8;
+    font-size:14px;
+    text-align: center;
+    padding: 5px;
+    border: 2px black solid;
+}
+/*styling for legend title*/
+.temporalLegend {
+    font-size:18px;
+}
+
+.leaflet-marker-hover {
+    transition-property: opacity;
+    transition-duration: 1s;
+    opacity: 1;
+}
