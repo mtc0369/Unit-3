@@ -16,53 +16,59 @@
         
     </head>
 
-    <body>
+    <body>       
+        
+      <div id="title"><center><h2>Changes in Wisconsin National Register of Historic Places Listings from 1970-2020</h2></center></div>
+      
+      <!--legend-->
+      <div id="legend"></div>
+  
+      <!--supplementary text-->
+      <div id="info">
+            <center><h4>NRHP Listings began in 1966 after the establishment of the National Historic Preservation
+            Act, which helps protect and preserve important historic properties. Factors
+            involved in listing a property include:</h4><h4><p><b>1.)</b> A desire to protect a resource,</p><p><b>2.)</b> Proper
+            justification, and</p><p><b>3.)</b> Concurrence from the State Historic Preservation Office.</p></h4></center>
 
-        <!--<div id="myDiv"></div>-->
-        
-        <div id="title"><center><h2>United States Tornado Fatalities 2010-2020</h2></center></div>
-        
-    
-        
-        <div class='custom-popup' id="mapid"></div>
-        <div id = "panel"></div>
-        
-        <!--<style>
-              .custom-popup .leaflet-popup-content-wrapper {
-              background:#0d78e2;
-              color:#fff;
-              font-size:16px;
-              line-height:24px;
-              }
-            .custom-popup .leaflet-popup-content-wrapper a {
-              color:rgba(255,255,255,0.5);
-              }
-            .custom-popup .leaflet-popup-tip-container {
-              width:30px;
-              height:15px;
-              }
-            .custom-popup .leaflet-popup-tip {
-              border-left:15px solid transparent;
-              border-right:15px solid transparent;
-              border-top:15px solid #2c3e50;
-              }
-              
-        </style>-->
-        
-        <!--<div class='custom-popup' id="mapid"></div>
-        <div id = "panel"></div>
-        <div class='temporalLegend' id = 'attribute-legend'></div>
-        <svg id="Layer_1" width="180px" height="180px">
-          <circle fill="#F47821" fill-opacity="0.8" stroke="#000000" stroke-miterlimit="10" cx="90" cy="90.001" r="89.5"/></svg>-->
+            <center><h4>NRHP eligibility determinations require an assessment of historic / prehistoric resources in relation to relevant
+            historic contexts through criteria set forth in 36 Code of Federal Regulations (CFR) § 60. The criteria (36 CFR §
+            60.4) are used to evaluate resources when complying with the NHPA. Those criteria state that eligible
+            resources comprise “districts, sites, buildings, structures, and objects that possess integrity of location, design,
+            setting, materials, workmanship, feeling, and association,” and any of the following criteria:</h4></center>
+            
+            <center><h4><p><b>A.)</b> that are associated with events that have made a significant contribution to the broad patterns of our
+            history,
+            <p><b>B.)</b> that are associated with the lives of persons significant in our past,</p>
+            <p><b>C.)</b> that embody the distinctive characteristics of a type, period, or method of construction, or that represent
+            the work of a master, or that possess high artistic value, or that represent a significant and distinguishable
+            entity whose components may lack individual distinction,</p>
+            <p><b>D.)</b> that has yielded, or may be likely to yield, information important in prehistory or history.</p></h4></center>
 
-        <div id="map"></div>
+            <center><h4>In addition to the above criteria, Historical / Cultural Resources eligible for listing must also be at least 50
+            years old, and have significance under a historical theme such as Economic Development of the Early
+            20th Century. A resource can also qualify for listing if it is the first or last of its kind, or is unique like the
+            architecture in Science Hall at the University of Wisconsin - Madison.</h4></center>
+
+            <center><h4>The rise in NRHP listings during the 1970s and 1980s was primariliy due to
+            economic benefits like rehabilitation tax credits for property owners. Many people sought NRHP status for their
+            properties without understanding what stipulations accompanied the federal benefits. By the 1990s, this misunderstanding 
+            of the regulations resulted in a widespread belief that NRHP listing automatically restricted what people could do with their properties. 
+            Some people even mistakenly believed that NRHP listing meant a property had to be open to the public. By the 21st century, knowledge of the
+            NRHP had more than 30 years to disseminate to every county; therefore, a general stabilization was expected rather than an overall decline. 
+            Although not the only contributor to the overall decline in NRHP listings, the lack of understanding NRHP regulations
+            was one of the primary causes.</h4></center>
+
+      </div>
+               
+
+        <!--<div id="map"></div>
         <script type="module">
 
             import {zoom} from "https://cdn.skypack.dev/d3-zoom@3";
             
             const handler = zoom();
             
-            </script>
+            </script>-->
         <!--<svg id="Layer_1" width="180px" height="180px">
         <circle fill="#F47821" fill-opacity="0.8" stroke="#000000" stroke-miterlimit="10" cx="90" cy="90.001" r="89.5"/>
         </svg>-->
@@ -72,12 +78,15 @@
         place these within <script> tags-->
 
         <!--put your external script links here-->
+
         <script src="https://d3js.org/d3.v4.js"></script>
         <script src='https://unpkg.com/simple-statistics@7.0.7/dist/simple-statistics.min.js'></script>
+        <script type="text/javascript" src="lib/d3-legend.min.js"></script>
         <script type="text/javascript" src="lib/topojson.min.js"></script>
         <script type="text/javascript" src="lib/d3.min.js"></script>        
         <script type="text/javascript" src="js/main.js"></script>
         <!--<script type="text/javascript" src="js/main copy 2.js"></script>-->
-        
+                
+
     </body>
 </html>

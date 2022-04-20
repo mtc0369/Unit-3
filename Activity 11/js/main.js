@@ -3,7 +3,7 @@
 (function(){    
     
     //pseudo-global variables - accessible to all functions that are called within this anonymous function
-    var attrArray = ["years 1970-1980", "years 1980-1990", "years 1990-2000", "years 2000-2010", "years 2010-2020"]; //list of attributes    
+    var attrArray = ["Years 1970-1980", "Years 1980-1990", "Years 1990-2000", "Years 2000-2010", "Years 2010-2020"]; //list of attributes    
     var expressed = attrArray[0]; //initial attribute    
 
     //chart frame dimensions
@@ -26,7 +26,7 @@
 
     //create map frame    
     var width = window.innerWidth * 0.4,//had to make map width smaller to accompdate large bar chart
-        height = 460;    
+        height = 460;   
         
     //begin script when window loads
     window.onload = setMap();
@@ -83,7 +83,7 @@
         var projection = d3
             .geoAlbers()
             .center([0, 44.8])//long, lat
-            .rotate([89.8, 0, 0])//long, lat, angle
+            .rotate([89.9, 0, 0])//long, lat, angle
             .parallels([42, 46])//2 lats specific to a conic projection
             .scale(5500)//pixel scale/zoom level - converts projection to pixel value
             //moves map to be half width and height of map frame - not necessary if adjustments made in .center; however, will auto center the map when changing parameters
@@ -191,7 +191,9 @@
             //calling create dropdown
             createDropdown(csvData);
             
-            countyDropdown(countyNRHP);            
+            //countyDropdown(countyNRHP);
+            
+            createLegend(csvData, expressed, colorScale);
             
         };
     };//end of set map function        
@@ -353,8 +355,8 @@
             //create color scale generator
             var colorScale = d3
                 .scaleThreshold()
-                .domain([-1000, -500, -250, -100, -50, -1, 0, 1, 50, 100])
-                .range(["#3f007d", "#54278f", "#6a51a3", "#807dba", "#9e9ac8", "#bcbddc", "#969696", "#edf8e9", "#74c476", "#31a354", "#006d2c"]);
+                .domain([-1000, -500, -250, -100, -50, 0, 0, 50, 100])
+                .range(["#3f007d", "#54278f", "#6a51a3", "#807dba", "#9e9ac8", "#bcbddc", "#969696", "#74c476", "#31a354", "#006d2c"]);
             
             return colorScale; 
         };
@@ -420,7 +422,7 @@
 
             var countyName = infolabel.append("div")
                 .attr("class", "labelname")
-                .html("</h1><b>" + props.NAME +" County"+"</b>");            
+                .html("<b>" + props.NAME +" County"+"</b>");            
         };
 
         //function to move info label with mouse
@@ -505,11 +507,12 @@
                     return "#969696";
                 }
             })
-            .style("stroke", "#000"
-            );       
+            .style("stroke", "#000");       
         
         var chartTitle = d3.select(".chartTitle")
             .text("Percent Change in NRHP Listings for " + expressed + " in each County")
+
+        createLegend(csvData, expressed, colorScale);
         };
         
         /*function countyDropdown(countyNRHP){
@@ -543,6 +546,39 @@
                 });
         };*/
 
+        function createLegend(csvData, expressed, colorScale){
+            /*legend = svg.append("g")
+                .attr("class","legend")
+                .attr("transform","translate(50,30)")
+                .style("font-size","12px")
+                .call(d3.legend)*/            
+            
+            /*var scale = d3.scaleLinear()
+                .domain(numLegend)
+                .range(legendColor);*/
+
+            d3.select("#legend")
+                .append("svg")
+                .attr("class", "legendBox");
+
+            var legend = d3.select("svg.legendBox");
+
+            legend.append("g")
+                .attr("class", "legend")
+                .attr("transform", "translate(10,15)");
+
+            var colorLegend = d3.legendColor()
+                //.shapeWidth(15)
+                .orient("vertical")
+                .ascending(true)
+                .scale(colorScale)
+                .title(expressed + " (percent)")
+                .labels(d3.legendHelpers.thresholdLabels)                                
+
+            legend.select(".legend")
+                .call(colorLegend);            
+        };
+
         //function to iterate and add counties
         function setEnumerationUnits(countyNRHP, map, path, colorScale){
             
@@ -573,8 +609,7 @@
                 })
                 .on("mousemove", moveLabel)
                                                
-        };        
-        
+        };       
     
 })();
 
