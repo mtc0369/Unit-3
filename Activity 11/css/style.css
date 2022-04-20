@@ -46,8 +46,10 @@
     color:#3f007d;
     border: 1px solid #999;
     box-shadow: 2px 2px 4px #999;
+    border-radius: 5px;
     cursor: pointer;
 }
+
 
 /*.countyDrop {
     position: absolute;
@@ -64,7 +66,7 @@
 
 .legendBox {
     position: absolute;
-    top: 515px;
+    top: 530px;
     left: 20px;
     z-index: 50;
     height: 200px;
@@ -73,7 +75,6 @@
     font-size: 0.65em;
     font-weight: bold;
     padding: 2px;    
-    
 }
 
 .option {
@@ -160,6 +161,7 @@
     border: solid thin #fff;
     padding: 5px 10px;
     top: -75px;
+    border-radius: 10px;
 }
 
 .infolabel h1 {

@@ -214,7 +214,7 @@
                 .append("option")
                 .attr("class", "titleOption")
                 .attr("disabled", "true")
-                .text("Select Attribute");
+                .text("Select Decade");
 
             //add attribute name options
             var attrOptions = dropdown
@@ -355,8 +355,8 @@
             //create color scale generator
             var colorScale = d3
                 .scaleThreshold()
-                .domain([-1000, -500, -250, -100, -50, 0, 0, 50, 100])
-                .range(["#3f007d", "#54278f", "#6a51a3", "#807dba", "#9e9ac8", "#bcbddc", "#969696", "#74c476", "#31a354", "#006d2c"]);
+                .domain([-1000, -500, -250, -100, -50, 0, 50, 100])
+                .range(["#3f007d", "#54278f", "#6a51a3", "#807dba", "#9e9ac8", "#bcbddc", "#74c476", "#31a354", "#006d2c"]);
             
             return colorScale; 
         };
@@ -388,7 +388,7 @@
         function highlight(props){
             //change stroke
             var selected = d3.selectAll("." + props.NAME)
-                .style("stroke", "blue")
+                .style("stroke", "yellow")
                 .style("stroke-width", "3")
                 setLabel(props);//calling set label
         };
@@ -495,9 +495,9 @@
                 }
             })
             //applies color values stored within color variable above
-            .style("fill", function(d){
+            /*.style("fill", function(d){
                 return colorScale(d[expressed]);
-            })                
+            })*/                
             .style("fill", function(d){
                 var value = d[expressed];
                 if (value !== 0){
@@ -567,13 +567,14 @@
                 .attr("class", "legend")
                 .attr("transform", "translate(10,15)");
 
-            var colorLegend = d3.legendColor()
-                //.shapeWidth(15)
+            var colorLegend = d3.legendColor()                
                 .orient("vertical")
                 .ascending(true)
                 .scale(colorScale)
                 .title(expressed + " (percent)")
-                .labels(d3.legendHelpers.thresholdLabels)                                
+                .labelFormat(",.2r")
+                .labelFormat("0")                              
+                .labels(d3.legendHelpers.thresholdLabels)                                                
 
             legend.select(".legend")
                 .call(colorLegend);            
