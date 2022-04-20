@@ -1,0 +1,167 @@
+
+/*style for map container*/
+.map {
+    border: medium solid #999;
+    background: rgb(240, 240, 240);
+    margin: 10px 0 0 10px; 
+}
+/*styling for main title*/
+#title {
+    padding: 2px;
+    text-align: center;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-thickness: 5px;
+    font-size:20px;
+    font-family: Arial;    
+    color:#fff;
+    background-color: #807dba;
+    display: center;
+}
+/*style for WI counties*/
+.counties {
+    stroke: rgb(250, 250, 250);
+    stroke-width: 0.75px;
+    stroke-linecap: round;
+    cursor: pointer;
+}
+/*additional styling for circles*/
+.circle{
+    cursor: pointer; 
+}
+/*style for menu dropdown*/
+.dropdown {
+    position: absolute;
+    top: 270px;
+    left: 30px;
+    z-index: 50;
+    font-family: sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 2px;
+    background-color: rgba(0,109,44,0.3);
+    color:#3f007d;
+    border: 1px solid #999;
+    box-shadow: 2px 2px 4px #999;
+    border-radius: 5px;
+    cursor: pointer;
+}
+/*styling for legend*/
+.legendBox {
+    position: absolute;
+    top: 530px;
+    left: 20px;
+    z-index: 50;
+    height: 200px;
+    width: 185px;
+    font-family: sans-serif;
+    font-size: 0.65em;
+    font-weight: bold;
+    padding: 2px;    
+}
+/*styling for dropdown options*/
+.option {
+    font-weight: normal;
+}
+/*style for gratecule lines*/
+.gratLines {
+    fill: none;
+    stroke: #999;
+    stroke-width: 1px;
+}
+/*style for gratecule background*/
+.gratBackground {
+    fill: #D5E3FF;
+}
+/*styling states surrounding WI*/
+.stateFeatures {
+    fill: rgb(221, 221, 221);
+    stroke: rgb(194, 194, 194);
+    stroke-width: 1px;
+}
+/*styling chart background*/
+.chart {
+    background-color: rgba(128,128,128,.2);
+    border: medium solid #999;
+    float: right;
+    margin: 10px 10px 0 0;
+}
+/*styling chart title*/
+.chartTitle {
+    font-family: sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    fill:#3f007d;
+}
+/*styling additional notation for chart*/
+.chartNotation {
+    font-family: sans-serif;
+    font-size: 0.6em;
+    font-weight: bold;
+    fill:#3f007d;
+}
+/*styling chart background*/
+.chartBackground {
+    fill: none;
+}
+/*styling chart frame*/
+.chartFrame {
+    fill: none;
+    stroke: #999;
+    stroke-width: 3px;
+    shape-rendering: crispEdges;
+}
+/*styling chart y axis*/
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #3f007d;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+}
+/*styling chart y axis text*/
+.axis text {
+    font-family: sans-serif;
+    font-size: 0.9em;
+    fill: #3f007d;
+}
+/*styling callout container*/
+.infolabel {
+    margin: 0 20px 0 0;
+    position: absolute;
+    height: 50px;
+    min-width: 100px;
+    color: #fff;
+    background-color: #807dba;
+    border: solid thin #fff;
+    padding: 5px 10px;
+    top: -75px;
+    border-radius: 10px;
+}
+/*styling calout text*/
+.infolabel h1 {
+    margin: 0 20px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+}
+/*styling html blocks*/
+#info {    
+    padding-left: 150px;
+    padding-right: 150px;
+    padding-bottom: 2px;    
+    font-size:13.5px;
+    text-align: justify;        
+    color:#fff;
+    background-color: #807dba;    
+    height: 150px;
+    overflow-y:auto;
+    border-radius: none;
+}
+/*styling html p blocks*/
+p {
+    margin: 0;
+    padding-left: 475px;
+    padding-right: 475px;
+    text-align: left;    
+}

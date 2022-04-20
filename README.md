@@ -1,16 +1,15 @@
-# Unit-3
- D3 Labs
-# Unit 2 - Lab 1 Leaflet Final
+# Unit-3 - Activities & Lab 2 D3-Interactive Final 
 
-### **Title:** *United States Tornado Fatalities 2010-2020*
+### **Title:** *Changes in Wisconsin National Register of Historic Places Listings from 1970-2020*
 
 ### **Author:** Michael Connolly
 
 ### **Dependencies:**
-*[Leaflet 1.7.1](https://leafletjs.com/reference-1.7.1.html)
+*[d3-7.4.4](https://d3js.org/https://d3js.org/d3.v4.js)
+*[d3-svg-legend_v4](https://d3-legend.susielu.com/.html)
 
 ### **Code Version:**
-Last Updated: March 11, 2022
+Last Updated: April 20, 2022
 
 ### **Description:**
-This interactive proportional symbol map was built using Leaflet, and it illustrates the number of tornado fatalities in the United States during the years 2010-2020.
+This interactive map was built using D3, and it illustrates the number NRHP listings per Wisconsin county by decade for comparison between 1970 and 2020.
